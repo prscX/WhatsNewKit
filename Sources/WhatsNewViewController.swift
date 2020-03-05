@@ -393,25 +393,29 @@ public extension WhatsNewViewController {
     
 }
 
+
+
 @objc public class WhatsNewBridge: NSObject {
-    @objc public static func show(from: UIViewController) {
+    @objc public static func show(from: UIViewController, props: Dictionary<String, Any>) {
+        let title = props["title"] as! String
+        let items = props["items"] as! Array<Dictionary<String, Any>>
+
+        var whatsNewItems = Array<WhatsNew.Item>()
+        
+        for item in items {
+            whatsNewItems.append(WhatsNew.Item(
+                title: item["title"] as! String,
+                subtitle: item["subtitle"] as! String,
+                image: nil
+            ))
+        }
+        
         // Initialize WhatsNew
         let whatsNew = WhatsNew(
             // The Title
-            title: "WhatsNewKit",
+            title: title,
             // The features you want to showcase
-            items: [
-                WhatsNew.Item(
-                    title: "Installation",
-                    subtitle: "You can install WhatsNewKit via CocoaPods or Carthage",
-                    image: UIImage(named: "installation")
-                ),
-                WhatsNew.Item(
-                    title: "Open Source",
-                    subtitle: "Contributions are very welcome 👨‍💻",
-                    image: UIImage(named: "openSource")
-                )
-            ]
+            items: whatsNewItems
         )
 
         // Initialize WhatsNewViewController with WhatsNew
