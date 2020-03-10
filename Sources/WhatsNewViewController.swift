@@ -406,7 +406,7 @@ public extension WhatsNewViewController {
             whatsNewItems.append(WhatsNew.Item(
                 title: item["title"] as! String,
                 subtitle: item["subtitle"] as! String,
-                image: nil
+                image: item["icon"] as? UIImage
             ))
         }
         
@@ -427,3 +427,4 @@ public extension WhatsNewViewController {
         from.present(whatsNewViewController, animated: true)
     }
 }
+
