@@ -398,6 +398,10 @@ public extension WhatsNewViewController {
 @objc public class WhatsNewBridge: NSObject {
     @objc public static func show(from: UIViewController, props: Dictionary<String, Any>) {
         let title = props["title"] as! String
+        
+        let titleColor = props["titleColor"] as! String
+        let buttonBackgroundColor = props["buttonBackgroundColor"] as! String
+        
         let items = props["items"] as! Array<Dictionary<String, Any>>
 
         var whatsNewItems = Array<WhatsNew.Item>()
@@ -409,7 +413,17 @@ public extension WhatsNewViewController {
                 image: item["icon"] as? UIImage
             ))
         }
-        
+
+        var configuration = WhatsNewViewController.Configuration()
+        if titleColor.count > 0 {
+            let color = UIColor(hex: titleColor)
+            configuration.titleView.titleColor = color!
+        }
+        if buttonBackgroundColor.count > 0 {
+            let color = UIColor(hex: buttonBackgroundColor)
+            configuration.completionButton.backgroundColor = color!
+        }
+
         // Initialize WhatsNew
         let whatsNew = WhatsNew(
             // The Title
@@ -420,7 +434,8 @@ public extension WhatsNewViewController {
 
         // Initialize WhatsNewViewController with WhatsNew
         let whatsNewViewController = WhatsNewViewController(
-            whatsNew: whatsNew
+            whatsNew: whatsNew,
+            configuration: configuration
         )
 
         // Present it 🤩
@@ -428,3 +443,22 @@ public extension WhatsNewViewController {
     }
 }
 
+extension UIColor {
+    public convenience init?(hex: String) {
+        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+
+        if ((cString.count) != 6) {
+            return nil
+        }
+
+        var rgbValue:UInt64 = 0
+        Scanner(string: cString).scanHexInt64(&rgbValue)
+
+        self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0, green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0, blue: CGFloat(rgbValue & 0x0000FF) / 255.0, alpha: CGFloat(1.0))
+        return
+    }
+}
